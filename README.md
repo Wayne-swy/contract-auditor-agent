@@ -16,6 +16,8 @@
 - **合规检查**：对照法律法规和行业标准进行合规性验证
 - **智能报告**：生成结构化的审计报告，包含风险等级和修改建议
 - **多场景支持**：适用于劳动合同、商业合同、服务协议等多种场景
+- **多格式支持**：支持 PDF、Word、图片等多种文件格式
+- **OCR 识别**：支持拍照上传，自动识别图片中的文字内容
 
 ---
 
@@ -51,16 +53,54 @@ cp -r contract-auditor-skill ~/.claude/skills/contract-auditor
 
 ### 使用方式
 
+#### 方式 1：直接调用技能
+
 在 Claude Code 中调用本技能：
 
 ```bash
 /contract-auditor
 ```
 
-或直接上传合同文本并请求审计：
+#### 方式 2：上传合同文件审计
+
+支持多种文件格式：
 
 ```
-请帮我审计这份合同，查找潜在风险点...
+请帮我审计这份合同文件
+[上传：contract.pdf / contract.docx / photo.jpg]
+```
+
+#### 方式 3：拍照上传（OCR 识别）
+
+直接上传拍摄的合同照片：
+
+```
+帮我识别并审计这份合同
+[上传图片：photo.jpg / photo.png]
+```
+
+#### 支持的输入格式
+
+| 格式类型 | 文件扩展名 | 说明 |
+|---------|-----------|------|
+| 图片 | .jpg, .jpeg, .png, .gif, .bmp, .webp, .tiff | 使用 OCR 识别 |
+| PDF | .pdf | 文本提取或 OCR |
+| Word | .doc, .docx | 文本提取 |
+| 纯文本 | .txt, .md | 直接读取 |
+
+### OCR 功能安装（可选）
+
+如需使用图片识别功能，需要安装 OCR 依赖：
+
+```bash
+# 进入 scripts 目录
+cd contract-auditor-skill/scripts
+
+# 安装 Python 依赖
+pip install -r requirements.txt
+
+# Windows 用户还需安装 Tesseract-OCR
+# 下载地址：https://github.com/UB-Mannheim/tesseract/wiki
 ```
 
 ### 输出示例
@@ -80,11 +120,15 @@ cp -r contract-auditor-skill ~/.claude/skills/contract-auditor
 contract-auditor-skill/
 ├── SKILL.md                 # 技能定义和配置
 ├── README.md                # 项目说明文档
+├── LICENSE                  # MIT 许可证
 ├── assets/
 │   └── report-template.md   # 审计报告输出模板
-└── references/
-    ├── checklist.md         # 审计检查清单
-    └── legal-guidelines.md  # 法律法规和合规指南
+├── references/
+│   ├── checklist.md         # 审计检查清单
+│   └── legal-guidelines.md  # 法律法规和合规指南
+└── scripts/
+    ├── file_processor.py    # 文件处理和 OCR 识别脚本
+    └── requirements.txt     # Python 依赖包
 ```
 
 ### 文件说明
@@ -95,6 +139,8 @@ contract-auditor-skill/
 | `checklist.md` | 必查清单，包含主体身份、金额期限、违约责任等检查项 |
 | `legal-guidelines.md` | 详细的法律依据，包含 SWC 分类、证券法合规、数据隐私等 |
 | `report-template.md` | 审计报告的输出格式模板 |
+| `file_processor.py` | 文件处理和 OCR 识别脚本 |
+| `requirements.txt` | Python 依赖包列表 |
 
 ---
 
