@@ -124,12 +124,50 @@ contract-auditor-skill/
 ├── assets/
 │   └── report-template.md   # 审计报告输出模板
 ├── references/
-│   ├── checklist.md         # 审计检查清单
-│   └── legal-guidelines.md  # 法律法规和合规指南
+│   ├── checklist.md            # 审计检查清单
+│   ├── legal-guidelines.md     # 法律法规和合规指南
+│   └── reviewer-checklist.md   # Reviewer Agent 质检清单
 └── scripts/
     ├── file_processor.py    # 文件处理和 OCR 识别脚本
     └── requirements.txt     # Python 依赖包
 ```
+
+---
+
+## 双 Agent 审计流程
+
+本项目采用 **Auditor + Reviewer** 双 Agent 架构，确保审计质量：
+
+```
+┌─────────────────────┐     ┌─────────────────────┐
+│  Auditor Agent      │     │  Reviewer Agent     │
+│  (审计员)           │     │  (质检员)           │
+├─────────────────────┤     ├─────────────────────┤
+│ • 读取合同原文      │────▶│ • 对照 checklist    │
+│ • 生成 Draft_Report │     │ • 必检项验证        │
+│                     │◀────│ • 通过/打回重审     │
+└─────────────────────┘     └─────────────────────┘
+         │                          │
+         ▼                          ▼
+   初步审计报告              Final_Audit_Report
+```
+
+### Reviewer 质检维度
+
+| 维度 | 检查项 | 权重 |
+|------|--------|------|
+| **完整性** | 关键要素提取、盲区扫描、违约链条 | 3 项 |
+| **逻辑性** | 法律红线对标、矛盾识别、管辖合理性 | 3 项 |
+| **输出质量** | 格式对齐、证据溯源、去幻觉 | 3 项 |
+| **建设性** | 意见闭环、语气专业度 | 2 项 |
+
+### 一票否决项
+
+出现以下情况直接打回（0 分）：
+- ❌ 胡言乱语（AI 自我介绍、非 Markdown 内容）
+- ❌ 致命漏检（明显管辖逻辑坑未标记）
+- ❌ JSON/格式崩溃（结构损坏无法解析）
+
 
 ### 文件说明
 
@@ -139,6 +177,7 @@ contract-auditor-skill/
 | `checklist.md` | 必查清单，包含主体身份、金额期限、违约责任等检查项 |
 | `legal-guidelines.md` | 详细的法律依据，包含 SWC 分类、证券法合规、数据隐私等 |
 | `report-template.md` | 审计报告的输出格式模板 |
+| `reviewer-checklist.md` | Reviewer Agent 质检清单，用于审计"审计报告"本身是否合格 |
 | `file_processor.py` | 文件处理和 OCR 识别脚本 |
 | `requirements.txt` | Python 依赖包列表 |
 
@@ -192,4 +231,4 @@ contract-auditor-skill/
 
 ---
 
-*最后更新：2026-03-20*
+*最后更新：2026-03-21*
